@@ -1,0 +1,19 @@
+{
+  "name": "stacky",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cannon": "^0.6.2",
+    "three": "^0.125.2"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
+  }
+}
