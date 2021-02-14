@@ -14,6 +14,43 @@ import {
 
 import { World, Body, Box, Vec3, NaiveBroadphase } from "cannon";
 
+const difficultyButtons = document.querySelectorAll(".difficulty-card");
+const startButton = document.querySelector("#start");
+const soundButton = document.querySelector(".sound");
+const overlay = document.querySelector(".blurry-overlay");
+const startMenu = document.querySelector(".start-menu");
+const overMenu = document.querySelector(".over-menu");
+
+const difficulties = ["easy", "medium", "hard"];
+let difficulty = "easy";
+
+difficultyButtons[0].addEventListener("click", () => {
+  difficultyButtons[0].classList.add("active");
+
+  difficultyButtons[1].classList.remove("active");
+  difficultyButtons[2].classList.remove("active");
+
+  difficulty = difficulties[0];
+});
+
+difficultyButtons[1].addEventListener("click", () => {
+  difficultyButtons[1].classList.add("active");
+
+  difficultyButtons[2].classList.remove("active");
+  difficultyButtons[0].classList.remove("active");
+
+  difficulty = difficulties[1];
+});
+
+difficultyButtons[2].addEventListener("click", () => {
+  difficultyButtons[2].classList.add("active");
+
+  difficultyButtons[0].classList.remove("active");
+  difficultyButtons[1].classList.remove("active");
+
+  difficulty = difficulties[2];
+});
+
 window.focus();
 
 let camera, scene, renderer;
@@ -168,24 +205,31 @@ function cutBox(topLayer, overlap, size, delta) {
   topLayer.cannonjs.addShape(shape);
 }
 
-window.addEventListener("mousedown", eventHandler);
-window.addEventListener("touchstart", eventHandler);
-window.addEventListener("keydown", function (e) {
-  if (e.key == " ") {
-    e.preventDefault();
-    eventHandler();
-    return;
-  }
-  if (["R", "r"].includes(e.key)) {
-    e.preventDefault();
-    startGame();
-    return;
+startButton.addEventListener("click", eventHandler);
+startButton.addEventListener("touchstart", eventHandler);
+window.addEventListener("keydown", (e) => {
+  if (!autopilot) {
+    if (e.key == " ") {
+      e.preventDefault();
+      eventHandler();
+      return;
+    }
+    if (["R", "r"].includes(e.key)) {
+      e.preventDefault();
+      startGame();
+      return;
+    }
   }
 });
 
 function eventHandler() {
-  if (autopilot) startGame();
-  else splitBlockAndAddNextOneIfOverlaps();
+  if (autopilot) {
+    overlay.classList.add("gone");
+    startMenu.classList.add("gone");
+    overMenu.classList.remove("active");
+
+    startGame();
+  } else splitBlockAndAddNextOneIfOverlaps();
 }
 
 function splitBlockAndAddNextOneIfOverlaps() {
@@ -245,6 +289,11 @@ function missedTheSpot() {
   scene.remove(topLayer.threejs);
 
   gameEnded = true;
+
+  if (!autopilot) {
+    overlay.classList.remove("gone");
+    overMenu.classList.add("active");
+  }
 }
 
 function animation(time) {

@@ -1,4 +1,261 @@
 * {
   margin: 0;
   padding: 0;
+  font-family: "Red Hat Display", sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  overflow: hidden;
+}
+
+.blurry-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  transition: ease 0.5s all;
+  z-index: 1;
+}
+
+.blurry-overlay.gone {
+  backdrop-filter: blur(0px);
+  background-color: rgba(0, 0, 0, 0);
+  pointer-events: none;
+}
+
+.start-menu,
+.over-menu {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  border: 12px solid white;
+  width: 80%;
+  max-width: 700px;
+  border-radius: 25px;
+  height: auto;
+  min-height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: ease 0.5s all;
+}
+
+.start-menu.gone,
+.over-menu {
+  transform: translate(-50%, -50%) scale(5);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.over-menu.active {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  pointer-events: all;
+}
+
+.start-menu h1 {
+  color: white;
+  font-family: "Orbitron";
+  font-size: 4rem;
+  margin: 20px auto;
+}
+
+.start-menu .instructions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.start-menu .instructions p {
+  color: white;
+  margin: 0 2px;
+}
+
+#space {
+  width: 50px;
+  height: 15px;
+  background-color: white;
+  border-radius: 2px;
+  position: relative;
+  margin-top: 3px;
+}
+
+#space::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 65%;
+  width: 40%;
+  height: 15%;
+  border-radius: 1px;
+  background-color: black;
+}
+
+.difficulty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  margin: 30px auto;
+  perspective: 200px;
+}
+
+.difficulty-card {
+  aspect-ratio: 1 / 1;
+  min-height: 100px;
+  border: 3px solid white;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 20px;
+  cursor: pointer;
+  transition: ease 0.25s all;
+  transform: scale(1) rotateX(20deg);
+}
+
+.difficulty-card:hover {
+  transform: scale(1.1) rotateX(15deg);
+}
+
+.difficulty-card.active {
+  transform: scale(1.2) rotateX(0deg);
+}
+
+.easy {
+  background-color: rgba(25, 177, 25, 0.089);
+}
+.easy.active {
+  background-color: rgba(25, 177, 25, 0.3);
+}
+
+.medium {
+  background-color: rgba(177, 174, 25, 0.089);
+}
+.medium.active {
+  background-color: rgba(177, 174, 25, 0.3);
+}
+
+.hard {
+  background-color: rgba(177, 25, 25, 0.089);
+}
+.hard.active {
+  background-color: rgba(177, 25, 25, 0.3);
+}
+
+.difficulty-card svg {
+  width: 50px;
+  height: 50px;
+}
+
+.difficulty-card p {
+  color: white;
+  margin-top: 5px;
+}
+
+button,
+button::after {
+  background-color: transparent;
+  padding: 5px 7px;
+  margin-bottom: 30px;
+  border: 0;
+  font-size: 20px;
+  color: #fff;
+  font-family: "Orbitron";
+  outline: transparent;
+  position: relative;
+  cursor: pointer;
+}
+
+button::after {
+  --slice-0: inset(50% 50% 50% 50%);
+  --slice-1: inset(80% -6px 0 0);
+  --slice-2: inset(50% -6px 30% 0);
+  --slice-3: inset(10% -6px 85% 0);
+  --slice-4: inset(40% -6px 43% 0);
+  --slice-5: inset(80% -6px 5% 0);
+
+  content: "start";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-shadow: -3px -3px 0px #f8f005, 3px 3px 0px #00e6f6;
+  clip-path: var(--slice-0);
+}
+
+button:hover::after {
+  animation: 1s glitch;
+  animation-timing-function: steps(2, end);
+}
+
+.sound {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+}
+
+.sound svg {
+  width: 30px;
+  height: 30px;
+}
+
+@keyframes glitch {
+  0% {
+    clip-path: var(--slice-1);
+    transform: translate(-20px, -10px);
+  }
+  10% {
+    clip-path: var(--slice-3);
+    transform: translate(10px, 10px);
+  }
+  20% {
+    clip-path: var(--slice-1);
+    transform: translate(-10px, 10px);
+  }
+  30% {
+    clip-path: var(--slice-3);
+    transform: translate(0px, 5px);
+  }
+  40% {
+    clip-path: var(--slice-2);
+    transform: translate(-5px, 0px);
+  }
+  50% {
+    clip-path: var(--slice-3);
+    transform: translate(5px, 0px);
+  }
+  60% {
+    clip-path: var(--slice-4);
+    transform: translate(5px, 10px);
+  }
+  70% {
+    clip-path: var(--slice-2);
+    transform: translate(-10px, 10px);
+  }
+  80% {
+    clip-path: var(--slice-5);
+    transform: translate(20px, -10px);
+  }
+  90% {
+    clip-path: var(--slice-1);
+    transform: translate(-10px, 0px);
+  }
+  100% {
+    clip-path: var(--slice-1);
+    transform: translate(0);
+  }
 }
