@@ -15,41 +15,54 @@ import {
 import { World, Body, Box, Vec3, NaiveBroadphase } from "cannon";
 
 const difficultyButtons = document.querySelectorAll(".difficulty-card");
+const endDifficultyCards = document.querySelectorAll(".end-difficulty-card");
 const startButton = document.querySelector("#start");
+const restartButton = document.querySelector(".restart");
 const soundButton = document.querySelector(".sound");
+const sounds = document.querySelectorAll("audio");
 const overlay = document.querySelector(".blurry-overlay");
 const startMenu = document.querySelector(".start-menu");
 const overMenu = document.querySelector(".over-menu");
+const endScore = document.querySelector("#end-score");
+const overTalk = document.querySelector("#over-talk");
 
 const difficulties = ["easy", "medium", "hard"];
 let difficulty = "easy";
 
-difficultyButtons[0].addEventListener("click", () => {
-  difficultyButtons[0].classList.add("active");
+[difficultyButtons, endDifficultyCards].forEach((buttons) => {
+  buttons[0].addEventListener("click", () => {
+    !buttons[0].classList.contains("active") && sounds[4].play();
+    buttons[0].classList.add("active");
 
-  difficultyButtons[1].classList.remove("active");
-  difficultyButtons[2].classList.remove("active");
+    buttons[1].classList.remove("active");
+    buttons[2].classList.remove("active");
 
-  difficulty = difficulties[0];
+    difficulty = difficulties[0];
+  });
+
+  buttons[1].addEventListener("click", () => {
+    !buttons[1].classList.contains("active") && sounds[4].play();
+    buttons[1].classList.add("active");
+
+    buttons[2].classList.remove("active");
+    buttons[0].classList.remove("active");
+
+    difficulty = difficulties[1];
+  });
+
+  buttons[2].addEventListener("click", () => {
+    !buttons[2].classList.contains("active") && sounds[4].play();
+    buttons[2].classList.add("active");
+
+    buttons[0].classList.remove("active");
+    buttons[1].classList.remove("active");
+
+    difficulty = difficulties[2];
+  });
 });
 
-difficultyButtons[1].addEventListener("click", () => {
-  difficultyButtons[1].classList.add("active");
-
-  difficultyButtons[2].classList.remove("active");
-  difficultyButtons[0].classList.remove("active");
-
-  difficulty = difficulties[1];
-});
-
-difficultyButtons[2].addEventListener("click", () => {
-  difficultyButtons[2].classList.add("active");
-
-  difficultyButtons[0].classList.remove("active");
-  difficultyButtons[1].classList.remove("active");
-
-  difficulty = difficulties[2];
-});
+startButton.addEventListener("mouseenter", () => sounds[1].play());
+restartButton.addEventListener("mouseenter", () => sounds[1].play());
 
 window.focus();
 
@@ -59,11 +72,13 @@ let lastTime;
 let stack;
 let overhangs;
 let forwards = true;
-const boxHeight = 1;
+const boxHeight = 0.7;
 const originalBoxSize = 3;
 let autopilot;
 let gameEnded;
 let robotPrecision;
+let rand;
+let lastHardChange = 0;
 
 init();
 
@@ -77,6 +92,8 @@ function init() {
   lastTime = 0;
   stack = [];
   overhangs = [];
+  rand = Math.floor(Math.random() * 361);
+
   setRobotPrecision();
 
   world = new World();
@@ -97,7 +114,7 @@ function init() {
     100
   );
 
-  camera.position.set(4, 4, 4);
+  camera.position.set(4, 3.5, 4);
   camera.lookAt(0, 0, 0);
 
   scene = new Scene();
@@ -126,6 +143,10 @@ function startGame() {
   lastTime = 0;
   stack = [];
   overhangs = [];
+  rand = Math.floor(Math.random() * 361);
+  overMenu.classList.remove("active");
+  overlay.classList.add("gone");
+  sounds[2].play();
 
   if (world) {
     while (world.bodies.length > 0) {
@@ -145,7 +166,7 @@ function startGame() {
   }
 
   if (camera) {
-    camera.position.set(4, 4, 4);
+    camera.position.set(4, 3.5, 4);
     camera.lookAt(0, 0, 0);
   }
 }
@@ -165,7 +186,11 @@ function addOverhang(x, z, width, depth) {
 
 function generateBox(x, y, z, width, depth, falls) {
   const geometry = new BoxGeometry(width, boxHeight, depth);
-  const color = new Color(`hsl(${30 + stack.length * 4}, 100%, 50%)`);
+  const color = new Color(
+    `hsl(${
+      falls ? rand + (stack.length - 1) * 8 : rand + stack.length * 8
+    }, 100%, 50%)`
+  );
   const material = new MeshLambertMaterial({ color });
   const mesh = new Mesh(geometry, material);
   mesh.position.set(x, y, z);
@@ -207,16 +232,13 @@ function cutBox(topLayer, overlap, size, delta) {
 
 startButton.addEventListener("click", eventHandler);
 startButton.addEventListener("touchstart", eventHandler);
+restartButton.addEventListener("click", startGame);
+restartButton.addEventListener("touchstart", startGame);
 window.addEventListener("keydown", (e) => {
   if (!autopilot) {
     if (e.key == " ") {
       e.preventDefault();
       eventHandler();
-      return;
-    }
-    if (["R", "r"].includes(e.key)) {
-      e.preventDefault();
-      startGame();
       return;
     }
   }
@@ -226,7 +248,6 @@ function eventHandler() {
   if (autopilot) {
     overlay.classList.add("gone");
     startMenu.classList.add("gone");
-    overMenu.classList.remove("active");
 
     startGame();
   } else splitBlockAndAddNextOneIfOverlaps();
@@ -271,6 +292,7 @@ function splitBlockAndAddNextOneIfOverlaps() {
     const nextDirection = direction == "x" ? "z" : "x";
 
     addLayer(nextX, nextZ, newWidth, newDepth, nextDirection);
+    !autopilot && sounds[3].play();
   } else {
     missedTheSpot();
   }
@@ -289,20 +311,69 @@ function missedTheSpot() {
   scene.remove(topLayer.threejs);
 
   gameEnded = true;
+  !autopilot && sounds[0].play();
 
   if (!autopilot) {
-    overlay.classList.remove("gone");
-    overMenu.classList.add("active");
+    endScore.innerHTML = `${stack.length - 1} ${
+      stack.length == 2 ? "meter" : "meters"
+    }`;
+    overTalk.innerHTML =
+      stack.length < 10
+        ? "What is this crap! Don't you have fingers?"
+        : stack.length < 18
+        ? "Not bad, but can be better."
+        : stack.length < 24
+        ? "You started to get my attention."
+        : stack.length < 30
+        ? "Is that you shining or am I dead, already?"
+        : "You rocked my world baby, keep going!";
+
+    switch (difficulty) {
+      case "easy":
+        endDifficultyCards[0].classList.add("active");
+        endDifficultyCards[1].classList.remove("active");
+        endDifficultyCards[2].classList.remove("active");
+        break;
+      case "medium":
+        endDifficultyCards[1].classList.add("active");
+        endDifficultyCards[0].classList.remove("active");
+        endDifficultyCards[2].classList.remove("active");
+        break;
+      case "hard":
+        endDifficultyCards[2].classList.add("active");
+        endDifficultyCards[1].classList.remove("active");
+        endDifficultyCards[0].classList.remove("active");
+        break;
+    }
+
+    setTimeout(() => {
+      overlay.classList.remove("gone");
+      overMenu.classList.add("active");
+    }, 750);
   }
 }
 
 function animation(time) {
   if (lastTime) {
     const timePassed = time - lastTime;
-    const speed = 0.008;
+    const speed = autopilot || difficulty == "easy" ? 0.008 : 0.01;
 
     const topLayer = stack[stack.length - 1];
     const previousLayer = stack[stack.length - 2];
+
+    if (
+      difficulty == "hard" &&
+      !autopilot &&
+      topLayer.threejs.position[topLayer.direction] < 3 &&
+      topLayer.threejs.position[topLayer.direction] > -3 &&
+      time - lastHardChange > 500
+    ) {
+      const random = Math.random();
+      if (random < 0.012) {
+        forwards = !forwards;
+        lastHardChange = time;
+      }
+    }
 
     const boxShouldMove =
       !gameEnded &&

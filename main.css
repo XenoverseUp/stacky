@@ -3,6 +3,7 @@
   padding: 0;
   font-family: "Red Hat Display", sans-serif;
   box-sizing: border-box;
+  user-select: none;
 }
 
 body {
@@ -44,7 +45,7 @@ body {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   transition: ease 0.5s all;
 }
 
@@ -61,7 +62,8 @@ body {
   pointer-events: all;
 }
 
-.start-menu h1 {
+.start-menu h1,
+.over-menu h1 {
   color: white;
   font-family: "Orbitron";
   font-size: 4rem;
@@ -74,7 +76,8 @@ body {
   align-items: center;
 }
 
-.start-menu .instructions p {
+.start-menu .instructions p,
+.over-menu .score-container p {
   color: white;
   margin: 0 2px;
 }
@@ -109,6 +112,38 @@ body {
   perspective: 200px;
 }
 
+.end-difficulty-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  height: 50px;
+  width: 33.3%;
+  padding: 10px;
+  max-width: 120px;
+  margin: auto 15px;
+  border: 3px solid white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: ease 0.25s all;
+}
+
+.end-difficulty-card:hover {
+  transform: scale(1.05);
+}
+
+.end-difficulty-card.active {
+  transform: scale(1.2);
+}
+
+.end-difficulty-card svg {
+  height: 100%;
+  margin-right: 10px;
+}
+
+.end-difficulty-card p {
+  color: white;
+}
+
 .difficulty-card {
   aspect-ratio: 1 / 1;
   min-height: 100px;
@@ -133,21 +168,21 @@ body {
 }
 
 .easy {
-  background-color: rgba(25, 177, 25, 0.089);
+  background-color: rgba(25, 177, 25, 0.116);
 }
 .easy.active {
   background-color: rgba(25, 177, 25, 0.3);
 }
 
 .medium {
-  background-color: rgba(177, 174, 25, 0.089);
+  background-color: rgba(177, 174, 25, 0.116);
 }
 .medium.active {
   background-color: rgba(177, 174, 25, 0.3);
 }
 
 .hard {
-  background-color: rgba(177, 25, 25, 0.089);
+  background-color: rgba(177, 25, 25, 0.136);
 }
 .hard.active {
   background-color: rgba(177, 25, 25, 0.3);
@@ -211,6 +246,26 @@ button:hover::after {
 .sound svg {
   width: 30px;
   height: 30px;
+}
+
+.score-container {
+  margin-bottom: 15px;
+  margin-top: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.score-container p span {
+  font-weight: 500;
+  font-size: 18px;
+  color: orange;
+}
+
+.cubes {
+  width: 80%;
+  max-width: 120px;
 }
 
 @keyframes glitch {
