@@ -2,18 +2,17 @@
   "name": "stacky",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "start": "parcel index.html",
-    "build": "parcel build index.html"
+    "build": "parcel build index.html",
+    "dev": "electron ."
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "cannon": "^0.6.2",
-    "three": "^0.125.2"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "electron": "^11.2.3",
     "parcel-bundler": "^1.12.4"
   }
 }
