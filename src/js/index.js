@@ -17,6 +17,12 @@ const difficulties = ["easy", "medium", "hard"];
 let difficulty = "easy";
 let muted = false;
 
+addEventListener("load", () => {
+  sounds[sounds.length - 1].loop = true;
+  sounds[sounds.length - 1].volume = 0.5;
+  sounds[sounds.length - 1].play();
+});
+
 [difficultyButtons, endDifficultyCards].forEach((buttons) => {
   buttons[0].addEventListener("click", () => {
     !buttons[0].classList.contains("active") && !muted && sounds[4].play();
@@ -53,10 +59,12 @@ soundButtons.forEach((button) => {
   button.addEventListener("click", () => {
     if (button.classList.contains("muted")) {
       button.classList.remove("muted");
+      sounds[sounds.length - 1].play();
       muted = false;
     } else {
       button.classList.add("muted");
       muted = true;
+      sounds[sounds.length - 1].pause();
     }
   });
 });
@@ -271,6 +279,15 @@ function splitBlockAndAddNextOneIfOverlaps() {
   const overlap = size - overhangSize;
 
   if (overlap > 0) {
+    counter.animate(
+      [
+        { transform: "scale(1.2) translateX(-50%)" },
+        { transform: "scale(1) translateX(-50%)" },
+      ],
+      {
+        duration: 200,
+      }
+    );
     counter.innerHTML = stack.length;
 
     cutBox(topLayer, overlap, size, delta);

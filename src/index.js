@@ -30,6 +30,8 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.on("ready", createWindow);
 
+// app.commandLine.appendSwitch("autoplay-policy", "no-user-gesture-required");
+
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.

@@ -286,9 +286,6 @@ button:hover::after {
   right: 20px;
   cursor: pointer;
   -webkit-app-region: no-drag;
-}
-
-.sound {
   transition: ease 0.1s all;
 }
 
