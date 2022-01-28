@@ -2,7 +2,7 @@
 
 This is an Electron based desktop game created using THREE.JS. The purpose of the game is to create a stack as tall as you can. You'll put a brick pressing `space` key and if the brick overflows, it simply cuts and game over. Otherwise, you get one point for each brick.
 
-[Gameplay](XenoverseUp.github.com/stacky/ss.png)
+[Gameplay](https://github.com/XenoverseUp/stacky/ss.png)
 
 ## Gameplay
 Game has three game modes: Easy, Medium and Hard
